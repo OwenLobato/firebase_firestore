@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { collection, addDoc, getDocs } from "firebase/firestore";
+import { collection, addDoc, getDocs, doc, deleteDoc } from "firebase/firestore";
 import { db } from "./firebaseConfig.js";
 import { MESSAGES } from "./MESSAGES.js";
 
@@ -28,13 +28,23 @@ function App() {
     setName("");
     setPhone("");
   };
+  
+  const getUsers = async () => {
+    const { docs } = await getDocs(collection(db, "agenda"));
+    const newArray = docs.map(item => ({ id: item.id, ...item.data() }));
+    setUsers(newArray);
+  }
+  
+  const deleteUser = async (id) => {
+    try {
+      await deleteDoc(doc(db, "agenda", id)); 
+    } catch (error) {
+      console.log(error);
+    }
+    
+  }
 
   useEffect(() => {
-    const getUsers = async () => {
-      const { docs } = await getDocs(collection(db, "agenda"));
-      const newArray = docs.map(item => ({ id: item.id, ...item.data() }));
-      setUsers(newArray);
-    }
     getUsers();
   }, [users]);
 
@@ -77,7 +87,9 @@ function App() {
               ? (users.map(item => (
                 <li className="list-group-item d-flex justify-content-between" key={item.id}>
                   {item.userName} -- {item.userPhone}
-                  <button className="btn btn-danger float-right">Borrar</button>
+                  <button className="btn btn-danger float-right" onClick={(id)=>{deleteUser(item.id)}}>
+                    Borrar
+                  </button>
                 </li>
               )))
               : (<span>Sin usuarios registrados</span>)
