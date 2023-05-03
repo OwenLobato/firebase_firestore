@@ -72,10 +72,13 @@ function App() {
         </div>
         <div className="col">
           <h2 className="text-center">Lista de usuarios</h2>
-          <ul>{
+          <ul className="list-group">{
             users.length !== 0
               ? (users.map(item => (
-                <li key={item.id}>{item.userName} -- {item.userPhone}</li>
+                <li className="list-group-item d-flex justify-content-between" key={item.id}>
+                  {item.userName} -- {item.userPhone}
+                  <button className="btn btn-danger float-right">Borrar</button>
+                </li>
               )))
               : (<span>Sin usuarios registrados</span>)
           }</ul>
@@ -84,5 +87,6 @@ function App() {
     </div>
   );
 }
+
 
 export default App;
