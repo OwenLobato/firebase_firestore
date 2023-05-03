@@ -13,7 +13,6 @@ function App() {
     e.preventDefault();
     if (!name.trim()) return setErrorMsg(MESSAGES.ERROR.EMPTY_NAME);
     if (!phone.trim()) return setErrorMsg(MESSAGES.ERROR.EMPTY_PHONE);
-    setErrorMsg(null);
     try {
       const user = {
         userName: name,
@@ -24,6 +23,9 @@ function App() {
     } catch (e) {
       console.error("Error adding document: ", e);
     }
+    setErrorMsg(null);
+    setName("");
+    setPhone("");
   };
 
   return (
@@ -37,12 +39,14 @@ function App() {
               placeholder="Nombre Apellido"
               type="text"
               onChange={(e) => {setName(e.target.value);}}
+              value={name}
               />
             <input
               className="form-control my-2"
               placeholder="3121548723"
               type="text"
               onChange={(e) => {setPhone(e.target.value);}}
+              value={phone}
             />
             <input
               type="submit"
