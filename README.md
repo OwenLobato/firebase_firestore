@@ -16,4 +16,6 @@ REACT_APP_MEASUREMENT_ID = ""
 ## Documentation
 * [Firebase](https://firebase.google.com/docs/auth/web/start?hl=es-419#web-version-9_1)
 
+* [Firestore](https://firebase.google.com/docs/firestore/quickstart?authuser=0&hl=es-419)
+
 * [Environment](https://create-react-app.dev/docs/adding-custom-environment-variables/)

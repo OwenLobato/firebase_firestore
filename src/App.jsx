@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { collection, addDoc } from "firebase/firestore";
+import { db } from "./firebaseConfig.js";
 import { MESSAGES } from "./MESSAGES.js";
 
 function App() {
@@ -7,11 +9,21 @@ function App() {
   const [phone, setPhone] = useState("");
   const [errorMsg, setErrorMsg] = useState(null);
 
-  const checkUsers = (e) => {
+  const addUser = async (e) => {
     e.preventDefault();
     if (!name.trim()) return setErrorMsg(MESSAGES.ERROR.EMPTY_NAME);
     if (!phone.trim()) return setErrorMsg(MESSAGES.ERROR.EMPTY_PHONE);
     setErrorMsg(null);
+    try {
+      const user = {
+        userName: name,
+        userPhone: phone
+      };
+      const docRef = await addDoc(collection(db, "agenda"), user);
+      console.log("Usuario añadido: ", docRef);
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
   };
 
   return (
@@ -19,7 +31,7 @@ function App() {
       <div className="row">
         <div className="col">
           <h2 className="text-center">Formulario de usuarios</h2>
-          <form className="form-group" onSubmit={checkUsers}>
+          <form className="form-group" onSubmit={addUser}>
             <input
               className="form-control"
               placeholder="Nombre Apellido"
