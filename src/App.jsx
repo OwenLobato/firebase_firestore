@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { collection, addDoc } from "firebase/firestore";
+import { useState, useEffect } from "react";
+import { collection, addDoc, getDocs } from "firebase/firestore";
 import { db } from "./firebaseConfig.js";
 import { MESSAGES } from "./MESSAGES.js";
 
@@ -7,6 +7,7 @@ function App() {
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
+  const [users, setUsers] = useState([]);
   const [errorMsg, setErrorMsg] = useState(null);
 
   const addUser = async (e) => {
@@ -18,8 +19,8 @@ function App() {
         userName: name,
         userPhone: phone
       };
-      const docRef = await addDoc(collection(db, "agenda"), user);
-      console.log("Usuario añadido: ", docRef);
+      await addDoc(collection(db, "agenda"), user)
+        .then(alert(MESSAGES.USER_CREATED))
     } catch (e) {
       console.error("Error adding document: ", e);
     }
@@ -27,6 +28,15 @@ function App() {
     setName("");
     setPhone("");
   };
+
+  useEffect(() => {
+    const getUsers = async () => {
+      const { docs } = await getDocs(collection(db, "agenda"));
+      const newArray = docs.map(item => ({ id: item.id, ...item.data() }));
+      setUsers(newArray);
+    }
+    getUsers();
+  }, [users]);
 
   return (
     <div className="container">
@@ -38,14 +48,14 @@ function App() {
               className="form-control"
               placeholder="Nombre Apellido"
               type="text"
-              onChange={(e) => {setName(e.target.value);}}
+              onChange={(e) => { setName(e.target.value); }}
               value={name}
-              />
+            />
             <input
               className="form-control my-2"
               placeholder="3121548723"
               type="text"
-              onChange={(e) => {setPhone(e.target.value);}}
+              onChange={(e) => { setPhone(e.target.value); }}
               value={phone}
             />
             <input
@@ -55,13 +65,20 @@ function App() {
             />
           </form>
           {
-            errorMsg 
-            ? (<div><p>{errorMsg}</p></div>)
-            : (null)
+            errorMsg
+              ? (<div><p>{errorMsg}</p></div>)
+              : (null)
           }
         </div>
         <div className="col">
           <h2 className="text-center">Lista de usuarios</h2>
+          <ul>{
+            users.length !== 0
+              ? (users.map(item => (
+                <li key={item.id}>{item.userName} -- {item.userPhone}</li>
+              )))
+              : (<span>Sin usuarios registrados</span>)
+          }</ul>
         </div>
       </div>
     </div>
